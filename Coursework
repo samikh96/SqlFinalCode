@@ -1,0 +1,95 @@
+1.1 
+SELECT CustomerID,CompanyName, Address, City, Region,PostalCode  FROM Customers
+WHERE City='Paris' OR City= 'London';
+
+1.2 
+
+SELECT *  FROM Products
+WHERE QuantityPerUnit LIKE '%bottles%';
+
+1.3 
+
+SELECT *  FROM Products
+JOIN Suppliers ON Products.SupplierID=Suppliers.SupplierID
+WHERE QuantityPerUnit LIKE '%bottles%';
+
+1.4
+
+SELECT COUNT(ProductID) AS 'total products per category', products.CategoryID,Categories.CategoryName FROM Products
+
+JOIN Categories ON Products.CategoryID = Categories.CategoryID
+GROUP BY products.CategoryID,Categories.CategoryName
+ORDER BY [total products per category]  DESC;
+
+
+1.5 
+
+SELECT CONCAT(TitleOfCourtesy, FirstName,LastName), City  FROM Employees 
+WHERE Country= 'UK';
+
+
+
+1.7
+
+SELECT COUNT(Freight) FROM Orders
+WHERE (ShipCountry='UK' OR ShipCountry = 'USA') AND Freight>100.0;
+
+--1.8
+SELECT TOP 1 [Order Details].OrderID, ROUND(sum(Unitprice*Quantity),2) AS TotalPrice, ROUND(sum((UnitPrice*Quantity)*Discount),2) AS Deducted FROM [Order Details] GROUP BY OrderID ORDER BY Deducted DESC;
+
+
+--Excerise 2
+
+--2.1-Created the student table with a primary key
+USE Eng47
+CREATE TABLE Students(
+    SpartaID INT PRIMARY KEY  IDENTITY(1,1),
+    Title varchar(255),
+    First_Name varchar(255),
+	Last_Name varchar(255),
+	Uni varchar(100),
+	Course varchar (100),
+	Grade varchar (5)
+);
+
+
+--2.2Write SQL code 
+INSERT INTO Students(Title,First_Name,Last_Name, Uni, Course, Grade)
+VALUES ('Mr.','Joyal','Shaju','Coventry','Computer Science', '1'),
+('Mr.','Victor','Granados Jimenez','Granada','Information and Documentation', '2.1'),
+('Mr.','Jack','Farmer','Leeds','Physics', '2.1'),
+('Mr.','Mohammad','Khwaja','Westminster','Electronic Engineering', '2.2'),
+('Mr.','Thomas','Briggs','Bournemouth','Exercise Science', '1'),
+('Mr.','Shaqi','Abdullah','Brunel','Mechanical Engineering', '2.1'),
+('Mr.','Daniel','Lippross','Hull','Chemistry', '2.2'),
+('Mr.','Zaid','Iqbal','QMUL','Computer Science', '2.1'),
+('Mr.','Paul','Brewer','Hull','Computer Science', '1'),
+('Miss.','Elizabeth','Nicholl','Canterbury Christ Church University','Sport and Exercise Science', '1'),
+('Miss.','Ariadna','Gonzalez Lopez','London Metropolitan','Business Information Technology', '1'),
+('Mr.','Ygor','Delboni Teixeira','University of Greenwich','Games Design and Development', '2.2'),
+('Mr.','Anjum Ali','Saiyad','Queen Mary University of london','Mathematics', '2.2'),
+('Mr.','Hussain','Fiaz','University of East London','Computer Science', '2.2')
+
+;
+
+
+
+--EXERCISE 3.1 
+USE Northwind
+SELECT EmployeeID,Title,FirstName,LastName,ReportsTo FROM Employees;
+
+--Exercise 3.2
+SELECT Suppliers.CompanyName, SUM(([Order Details].UnitPrice * [Order Details].Quantity) * (1-[Order Details].Discount)) AS 'total sales'
+FROM [order details]
+JOIN Products ON [Order Details].[ProductID] = Products.ProductID
+JOIN Suppliers ON Suppliers.SupplierID = Products.ProductID
+GROUP BY Suppliers.CompanyName
+HAVING SUM(([Order Details].UnitPrice * [Order Details].Quantity) * (1-[Order Details].Discount)) > 10000;
+
+--Exercise 3.3
+SELECT TOP 10 Companyname, ROUND(sum(Unitprice*Quantity),2) AS TotalPrice, ROUND(sum((UnitPrice*Quantity)*Discount),0) AS 'total value' FROM [Order Details]
+JOIN Orders ON Orders.OrderID = [Order Details].OrderID
+JOIN Customers ON Customers.CustomerID =Orders.CustomerID
+WHERE ShippedDate IS NOT NULL AND YEAR(shippingdate)=1998
+GROUP BY CompanyName
+ORDER BY 'total value' DESC;
